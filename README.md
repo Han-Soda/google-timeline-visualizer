@@ -147,6 +147,20 @@ only animation timing and never route geometry. Video format offers square 480p,
 720p, and 1080p output plus portrait 1080 × 1920 and landscape 1920 × 1080 presets.
 Restore defaults returns all video settings to the recommended values.
 
+**Camera and animation** fine-tunes the motion. Zoom smoothness eases the camera
+into zoom changes: higher values widen the view before long trips and settle in
+gradually after arriving, while the lowest setting keeps the original quick zoom.
+The camera never frames tighter than the selected map view needs, so the moving
+marker stays in view. Route points chooses how many Timeline points the animation
+follows. Wider spacing skips points closer together than the selected distance, which
+calms GPS jitter and dense stops; the selected period summary shows how many points
+are animated. All points keeps every detail.
+
+**Route and overlay** controls what stays on the map. Keep past routes visible
+leaves completed routes behind the moving marker with an adjustable opacity. Route
+lines scale with the video resolution, so 1080p and larger exports keep the same
+proportions as a 480p video.
+
 Timeline processing uses Conservative GPS outlier filtering by default. It ignores
 only isolated, implausible out-and-back coordinates, reports the number ignored,
 and keeps the original JSON file unchanged. Set the filter to Off to use every

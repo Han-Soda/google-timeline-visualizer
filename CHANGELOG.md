@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add an Android Zoom smoothness setting that widens the camera before long trips and settles in gradually after arrival without tightening any framing, and ease the ending zoom-out to match.
+- Add an Android Route points setting that animates fewer Timeline points by skipping points closer than the chosen spacing, while keeping route breaks, transfers, and activity segments.
+- Make Keep past routes visible clearly visible with an adjustable opacity, scale route strokes with the video resolution, and keep the choice through Reset video defaults and activity recreation.
+- Refresh the Android interface with a complete Material 3 color scheme generated from the brand pink, rounder shapes, tonal cards, and a grouped Settings screen.
 - Keep the Python CLI's selected duration inclusive of the 1.5-second final overview, write the resolved title to MP4 metadata, use Android-aligned visual pacing by default, and support 15 through 120 fps plus 1440p and 2160p output.
 - Expand the web app to 10 through 300 seconds, square, portrait, and landscape output with a 480 through 2160 pixel short edge, and 15 through 120 fps with exact WebCodecs capability checks.
 - Add shared Kotlin, Python, and TypeScript parity fixtures and document portable and Android-only capabilities.
