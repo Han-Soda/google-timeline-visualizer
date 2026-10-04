@@ -575,6 +575,17 @@
     <string name="simplify_route_detail_summary">Verwendet zusammengefasste Timeline-Aktivitäten für eine übersichtlichere Route in Videos über lange Zeiträume. Wenn die Option deaktiviert ist, wird die detaillierteste verfügbare Route verwendet.</string>
     <string name="keep_past_routes_visible">Vergangene Routen sichtbar lassen</string>
     <string name="keep_past_routes_visible_summary">Zeigt abgeschlossene Routen als dezente Spur im Hintergrund. Wenn die Option deaktiviert ist, werden ältere Bewegungen ausgeblendet.</string>
+    <string name="animation_settings">Kamera und Animation</string>
+    <string name="animation_settings_summary">Lege fest, wie die Kamera zoomt und wie vielen Timeline-Punkten die Animation folgt.</string>
+    <string name="zoom_smoothness">Zoom-Glättung</string>
+    <string name="zoom_smoothness_summary">Höhere Werte zoomen vor langen Reisen früher heraus und nach der Ankunft allmählich hinein. Der niedrigste Wert behält den ursprünglichen schnellen Zoom.</string>
+    <string name="route_points">Routenpunkte</string>
+    <string name="route_points_summary">Größere Abstände überspringen dicht beieinanderliegende Timeline-Punkte, damit unruhige Aufenthalte und dichte Routen ruhiger animiert werden. Alle Punkte behält jedes Detail.</string>
+    <string name="route_points_all">Alle Punkte</string>
+    <string name="route_points_spacing">Mindestens %1$s Abstand</string>
+    <string name="route_points_used">%1$s von %2$s Punkten animiert</string>
+    <string name="past_route_opacity">Deckkraft vergangener Routen</string>
+    <string name="route_and_overlay">Route und Einblendungen</string>
     <string name="hide_dates">Datumsangaben ausblenden</string>
     <string name="hide_dates_summary">Blendet Datumsangaben im Video aus. Die Entfernung bleibt sichtbar.</string>
 </resources>

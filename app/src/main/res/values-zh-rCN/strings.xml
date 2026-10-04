@@ -567,6 +567,17 @@
     <string name="simplify_route_detail_summary">在长时间跨度的视频中使用摘要后的时间轴活动来生成更清晰的路线。关闭时使用可用的最详细路线。</string>
     <string name="keep_past_routes_visible">保留过去的路线</string>
     <string name="keep_past_routes_visible_summary">将已完成的路线显示为淡色背景轨迹。关闭时，较早的移动会逐渐消失。</string>
+    <string name="animation_settings">镜头与动画</string>
+    <string name="animation_settings_summary">微调镜头的缩放方式，以及动画沿用的时间轴点数量。</string>
+    <string name="zoom_smoothness">缩放平滑度</string>
+    <string name="zoom_smoothness_summary">数值越高，长途移动前会提前拉远，抵达后再逐渐拉近。设为最低时保留原来的快速缩放。</string>
+    <string name="route_points">路线点数</string>
+    <string name="route_points_summary">间距越大，越会跳过彼此靠近的时间轴点，让抖动的停留和密集的路线动画更平稳。选择“全部点”可保留所有细节。</string>
+    <string name="route_points_all">全部点</string>
+    <string name="route_points_spacing">间隔至少 %1$s</string>
+    <string name="route_points_used">动画使用 %2$s 个点中的 %1$s 个</string>
+    <string name="past_route_opacity">过去路线的不透明度</string>
+    <string name="route_and_overlay">路线与叠加信息</string>
     <string name="hide_dates">隐藏日期</string>
     <string name="hide_dates_summary">隐藏视频中的日期，距离仍会显示。</string>
 </resources>

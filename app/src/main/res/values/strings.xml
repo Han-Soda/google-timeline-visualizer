@@ -640,6 +640,17 @@
     <string name="simplify_route_detail_summary">Use summarized Timeline activity for a cleaner route in long-history videos. When off, the most detailed available route is used.</string>
     <string name="keep_past_routes_visible">Keep past routes visible</string>
     <string name="keep_past_routes_visible_summary">Show completed routes as a faint background trail. When off, older movement fades out.</string>
+    <string name="animation_settings">Camera and animation</string>
+    <string name="animation_settings_summary">Fine-tune how the camera zooms and how many Timeline points the animation follows.</string>
+    <string name="zoom_smoothness">Zoom smoothness</string>
+    <string name="zoom_smoothness_summary">Higher values zoom out before long trips and settle in gradually after arriving. The lowest setting keeps the original quick zoom.</string>
+    <string name="route_points">Route points</string>
+    <string name="route_points_summary">Wider spacing skips Timeline points that sit close together, so jittery stops and dense routes animate more calmly. All points keeps every detail.</string>
+    <string name="route_points_all">All points</string>
+    <string name="route_points_spacing">At least %1$s apart</string>
+    <string name="route_points_used">Animating %1$s of %2$s points</string>
+    <string name="past_route_opacity">Past route opacity</string>
+    <string name="route_and_overlay">Route and overlay</string>
     <string name="hide_dates">Hide dates</string>
     <string name="hide_dates_summary">Hide dates in the video. Distance stays visible.</string>
 </resources>

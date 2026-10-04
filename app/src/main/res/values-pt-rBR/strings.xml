@@ -577,6 +577,17 @@
     <string name="simplify_route_detail_summary">Usa a atividade resumida da Linha do tempo para criar uma rota mais clara em vídeos de períodos longos. Quando desativado, usa a rota mais detalhada disponível.</string>
     <string name="keep_past_routes_visible">Manter rotas anteriores visíveis</string>
     <string name="keep_past_routes_visible_summary">Mostra as rotas concluídas como um rastro discreto ao fundo. Quando desativado, os movimentos anteriores desaparecem.</string>
+    <string name="animation_settings">Câmera e animação</string>
+    <string name="animation_settings_summary">Ajuste como a câmera aplica o zoom e quantos pontos da Linha do tempo a animação segue.</string>
+    <string name="zoom_smoothness">Suavidade do zoom</string>
+    <string name="zoom_smoothness_summary">Valores maiores afastam a câmera antes de viagens longas e aproximam aos poucos após a chegada. O valor mínimo mantém o zoom rápido original.</string>
+    <string name="route_points">Pontos da rota</string>
+    <string name="route_points_summary">Um espaçamento maior ignora pontos da Linha do tempo muito próximos, para animar com mais calma paradas instáveis e rotas densas. Todos os pontos mantém cada detalhe.</string>
+    <string name="route_points_all">Todos os pontos</string>
+    <string name="route_points_spacing">Pelo menos %1$s de distância</string>
+    <string name="route_points_used">Animando %1$s de %2$s pontos</string>
+    <string name="past_route_opacity">Opacidade das rotas anteriores</string>
+    <string name="route_and_overlay">Rota e sobreposição</string>
     <string name="hide_dates">Ocultar datas</string>
     <string name="hide_dates_summary">Oculta as datas no vídeo. A distância continua visível.</string>
 </resources>

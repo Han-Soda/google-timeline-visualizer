@@ -62,6 +62,7 @@ import com.google.android.material.datepicker.CompositeDateValidator
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -128,10 +129,12 @@ import dev.mahlernim.timelinevisualizer.journal.route.journeyForDateRange
 import dev.mahlernim.timelinevisualizer.journal.route.journeyForRange
 import dev.mahlernim.timelinevisualizer.model.GeoPoint
 import dev.mahlernim.timelinevisualizer.model.Journey
+import dev.mahlernim.timelinevisualizer.model.RoutePointSpacing
 import dev.mahlernim.timelinevisualizer.model.Timeline
 import dev.mahlernim.timelinevisualizer.model.TimelinePeriod
 import dev.mahlernim.timelinevisualizer.model.TitleTemplate
 import dev.mahlernim.timelinevisualizer.model.VideoDuration
+import dev.mahlernim.timelinevisualizer.model.withMinimumPointSpacing
 import dev.mahlernim.timelinevisualizer.presets.PresetNameResult
 import dev.mahlernim.timelinevisualizer.presets.PresetRepository
 import dev.mahlernim.timelinevisualizer.presets.PresetValues
@@ -205,6 +208,7 @@ import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
 import androidx.core.util.Pair as AndroidPair
 import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -222,6 +226,9 @@ class MainActivity : AppCompatActivity() {
     private var rawOnlyImport = false
     private var journey: Journey? = null
     private var selectedIgnoredCount = 0
+    /** The selected journey before route point spacing is applied. */
+    private var selectedSourceJourney: Journey? = null
+    private var routePointSpacing = RoutePointSpacing.DEFAULT
     private var animation: ValueAnimator? = null
     private var pendingExport: VideoExportRequest? = null
     private var pendingExportDestination = false
@@ -666,6 +673,8 @@ class MainActivity : AppCompatActivity() {
         configureTimelineDisplay()
         savedInstanceState?.takeIf { it.containsKey(STATE_DRAFT_HIDE_DATES) }
             ?.let { applyHideDates(it.getBoolean(STATE_DRAFT_HIDE_DATES)) }
+        savedInstanceState?.takeIf { it.containsKey(STATE_DRAFT_ROUTE_POINT_SPACING) }
+            ?.let { routePointSpacing = RoutePointSpacing.fromMeters(it.getInt(STATE_DRAFT_ROUTE_POINT_SPACING)) }
         configureLanguageSelection()
         configureCameraPreparation()
         configureMonthDropdowns()
@@ -797,6 +806,10 @@ class MainActivity : AppCompatActivity() {
         outState.putBoolean(STATE_DRAFT_CUSTOM_FRAME_RATE, exportFormat.customFrameRate)
         outState.putString(STATE_DRAFT_TRIP_DETECTION, cameraSettings.tripDetection.name)
         outState.putString(STATE_DRAFT_LOCAL_FRAMING, cameraSettings.localFraming.name)
+        outState.putBoolean(STATE_DRAFT_KEEP_PAST_ROUTES, cameraSettings.keepPastRoutesVisible)
+        outState.putInt(STATE_DRAFT_ZOOM_SMOOTHNESS, cameraSettings.zoomSmoothness)
+        outState.putInt(STATE_DRAFT_PAST_ROUTE_OPACITY, cameraSettings.pastRouteOpacity)
+        outState.putInt(STATE_DRAFT_ROUTE_POINT_SPACING, routePointSpacing.meters)
         outState.putString(STATE_ACTIVE_PRESET_ID, activePresetId)
         outState.putString(STATE_MODIFIED_BUILT_IN_ID, modifiedBuiltInId)
         outState.putString(STATE_PRESET_ORIGIN_ID, presetOriginId)
@@ -1163,7 +1176,23 @@ class MainActivity : AppCompatActivity() {
         val dialog = BottomSheetDialog(this)
         dialog.setContentView(sheet.root)
         var working = cameraSettings
+        var workingSpacing = routePointSpacing
         sheet.hideDatesSwitch.isChecked = hideDates
+        sheet.keepPastRoutesVisibleSwitch.isChecked = working.keepPastRoutesVisible
+        sheet.pastRouteOpacitySlider.isEnabled = working.keepPastRoutesVisible
+        sheet.keepPastRoutesVisibleSwitch.setOnCheckedChangeListener { _, checked ->
+            working = working.copy(keepPastRoutesVisible = checked)
+            sheet.pastRouteOpacitySlider.isEnabled = checked
+        }
+        bindPercentSlider(sheet.pastRouteOpacitySlider, sheet.pastRouteOpacityValue, working.pastRouteOpacity) {
+            working = working.copy(pastRouteOpacity = it)
+        }
+        bindPercentSlider(sheet.zoomSmoothnessSlider, sheet.zoomSmoothnessValue, working.zoomSmoothness) {
+            working = working.copy(zoomSmoothness = it)
+        }
+        bindRoutePointSlider(sheet.routePointSpacingSlider, sheet.routePointSpacingValue, workingSpacing) {
+            workingSpacing = it
+        }
 
         val aspectLabels = listOf(R.string.aspect_square, R.string.aspect_portrait, R.string.aspect_landscape).map(::getString)
         val cameraLabels = mapViewLabelResources.map(::getString)
@@ -1263,6 +1292,7 @@ class MainActivity : AppCompatActivity() {
         sheet.applyButton.setOnClickListener {
             applyHideDates(sheet.hideDatesSwitch.isChecked)
             applyAdvancedSettings(working)
+            applyRoutePointSpacing(workingSpacing)
             syncPresetMatch()
             renderCreateStep()
             dialog.dismiss()
@@ -2928,15 +2958,33 @@ class MainActivity : AppCompatActivity() {
 
     private fun applySelectedJourney(selected: Journey, ignoredCount: Int) {
         animation?.cancel()
-        journey = selected
+        selectedSourceJourney = selected
+        val spaced = selected.withMinimumPointSpacing(routePointSpacing.kilometers)
+        journey = spaced
         selectedIgnoredCount = ignoredCount
-        editor.timelineView.journey = selected
+        editor.timelineView.journey = spaced
         editor.timelineSeek.progress = 0
         showProgress(0f)
         editor.videoReadyGroup.visibility = View.GONE
-        editor.periodSummaryText.text = selectedPeriodSummary(selected, ignoredCount)
+        renderSelectedPeriodSummary()
         updateDurationRecommendation()
         updateCameraPreparationUi()
+    }
+
+    private fun renderSelectedPeriodSummary() {
+        val selected = journey ?: return
+        val summary = selectedPeriodSummary(selected, selectedIgnoredCount)
+        val source = selectedSourceJourney
+        editor.periodSummaryText.text = if (source != null && source.points.size > selected.points.size) {
+            val number = NumberFormat.getIntegerInstance()
+            summary + "\n" + getString(
+                R.string.route_points_used,
+                number.format(selected.points.size),
+                number.format(source.points.size),
+            )
+        } else {
+            summary
+        }
     }
 
     private fun updateDurationRecommendation() {
@@ -3412,15 +3460,19 @@ class MainActivity : AppCompatActivity() {
         settingsScreen.resetAdvancedSettingsButton.setOnClickListener {
             markPresetCustom(clearDefault = !settingsReturnToCreate)
             if (settingsReturnToCreate) {
-                applyAdvancedSettings(settingsViewModel.state.value.camera)
+                applyAdvancedSettings(savedCameraDraft())
             } else {
                 settingsViewModel.resetVideoDefaults()
-                applyAdvancedSettings(settingsViewModel.state.value.camera)
+                applyAdvancedSettings(savedCameraDraft())
             }
             Snackbar.make(binding.root, R.string.video_defaults_restored, Snackbar.LENGTH_SHORT).show()
         }
-        applyAdvancedSettings(settingsViewModel.state.value.camera)
+        applyAdvancedSettings(savedCameraDraft())
     }
+
+    /** Saved camera defaults plus the trail and zoom choices kept in display preferences. */
+    private fun savedCameraDraft(): CameraSettings =
+        settingsViewModel.state.value.let { state -> state.withDisplayChoices(state.camera) }
 
     private fun configurePresets() {
         presetsConfigured = true
@@ -3452,7 +3504,17 @@ class MainActivity : AppCompatActivity() {
                 exportFormat = restoredExportFormat(savedState),
                 tripDetection = TripDetection.valueOf(savedState.getString(STATE_DRAFT_TRIP_DETECTION)!!),
                 localFraming = LocalFraming.valueOf(savedState.getString(STATE_DRAFT_LOCAL_FRAMING)!!),
-            )
+            ).let { restoredCamera ->
+                val display = settingsViewModel.state.value
+                restoredCamera.copy(
+                    keepPastRoutesVisible = savedState.getBoolean(
+                        STATE_DRAFT_KEEP_PAST_ROUTES,
+                        display.keepPastRoutesVisible,
+                    ),
+                    zoomSmoothness = savedState.getInt(STATE_DRAFT_ZOOM_SMOOTHNESS, display.zoomSmoothness),
+                    pastRouteOpacity = savedState.getInt(STATE_DRAFT_PAST_ROUTE_OPACITY, display.pastRouteOpacity),
+                )
+            }
         }.getOrNull() ?: return
         val restoredPresetId = savedState.getString(STATE_ACTIVE_PRESET_ID)
         activePresetId = presetRepository.presets().firstOrNull {
@@ -3472,7 +3534,7 @@ class MainActivity : AppCompatActivity() {
                 videoQuality = VideoQuality.valueOf(savedState.getString(STATE_CUSTOMIZATION_QUALITY)!!),
                 tripDetection = TripDetection.valueOf(savedState.getString(STATE_CUSTOMIZATION_TRIP_DETECTION)!!),
                 localFraming = LocalFraming.valueOf(savedState.getString(STATE_CUSTOMIZATION_LOCAL_FRAMING)!!),
-            )
+            ).let(settingsViewModel.state.value::withDisplayChoices)
         }.getOrNull()
     }
 
@@ -3779,14 +3841,103 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        val keepVisible = settingsViewModel.state.value.keepPastRoutesVisible
-        settingsScreen.keepPastRoutesVisibleSwitch.isChecked = keepVisible
-        applyAdvancedSettings(cameraSettings.copy(keepPastRoutesVisible = keepVisible))
+        val display = settingsViewModel.state.value
+        settingsScreen.keepPastRoutesVisibleSwitch.isChecked = display.keepPastRoutesVisible
+        settingsScreen.pastRouteOpacitySlider.isEnabled = display.keepPastRoutesVisible
         settingsScreen.keepPastRoutesVisibleSwitch.setOnCheckedChangeListener { _, checked ->
             settingsViewModel.updateKeepPastRoutesVisible(checked)
+            settingsScreen.pastRouteOpacitySlider.isEnabled = checked && !exportingVideo
             applyAdvancedSettings(cameraSettings.copy(keepPastRoutesVisible = checked))
             editor.timelineView.invalidate()
         }
+        bindPercentSlider(
+            settingsScreen.pastRouteOpacitySlider,
+            settingsScreen.pastRouteOpacityValue,
+            display.pastRouteOpacity,
+        ) { percent ->
+            settingsViewModel.updatePastRouteOpacity(percent)
+            applyAdvancedSettings(cameraSettings.copy(pastRouteOpacity = percent))
+        }
+        bindPercentSlider(
+            settingsScreen.zoomSmoothnessSlider,
+            settingsScreen.zoomSmoothnessValue,
+            display.zoomSmoothness,
+        ) { percent ->
+            settingsViewModel.updateZoomSmoothness(percent)
+            applyAdvancedSettings(cameraSettings.copy(zoomSmoothness = percent))
+        }
+        routePointSpacing = display.routePointSpacing
+        bindRoutePointSlider(
+            settingsScreen.routePointSpacingSlider,
+            settingsScreen.routePointSpacingValue,
+            display.routePointSpacing,
+        ) { spacing ->
+            settingsViewModel.updateRoutePointSpacing(spacing)
+            applyRoutePointSpacing(spacing)
+        }
+    }
+
+    private fun bindPercentSlider(
+        slider: Slider,
+        valueText: TextView,
+        initialPercent: Int,
+        onUserChange: (Int) -> Unit,
+    ) {
+        slider.value = snappedSliderValue(slider, initialPercent.toFloat())
+        valueText.text = formatPercent(slider.value.roundToInt())
+        slider.addOnChangeListener { _, value, fromUser ->
+            val percent = value.roundToInt()
+            valueText.text = formatPercent(percent)
+            if (fromUser) onUserChange(percent)
+        }
+    }
+
+    private fun bindRoutePointSlider(
+        slider: Slider,
+        valueText: TextView,
+        initial: RoutePointSpacing,
+        onUserChange: (RoutePointSpacing) -> Unit,
+    ) {
+        val choices = RoutePointSpacing.entries
+        slider.valueFrom = 0f
+        slider.valueTo = choices.lastIndex.toFloat()
+        slider.stepSize = 1f
+        slider.value = initial.ordinal.toFloat()
+        valueText.text = routePointSpacingLabel(initial)
+        slider.addOnChangeListener { _, value, fromUser ->
+            val spacing = choices[value.roundToInt().coerceIn(0, choices.lastIndex)]
+            valueText.text = routePointSpacingLabel(spacing)
+            if (fromUser) onUserChange(spacing)
+        }
+    }
+
+    /** Material sliders reject values outside their range or between steps. */
+    private fun snappedSliderValue(slider: Slider, value: Float): Float {
+        val clamped = value.coerceIn(slider.valueFrom, slider.valueTo)
+        val step = slider.stepSize
+        if (step <= 0f) return clamped
+        val steps = ((clamped - slider.valueFrom) / step).roundToInt()
+        return (slider.valueFrom + steps * step).coerceIn(slider.valueFrom, slider.valueTo)
+    }
+
+    private fun formatPercent(percent: Int): String =
+        NumberFormat.getPercentInstance().format(percent / 100.0)
+
+    private fun routePointSpacingLabel(spacing: RoutePointSpacing): String {
+        if (spacing == RoutePointSpacing.ALL_POINTS) return getString(R.string.route_points_all)
+        val number = NumberFormat.getNumberInstance().apply { maximumFractionDigits = 1 }
+        val distance = if (spacing.meters >= 1_000) {
+            "${number.format(spacing.meters / 1_000.0)} km"
+        } else {
+            "${number.format(spacing.meters)} m"
+        }
+        return getString(R.string.route_points_spacing, distance)
+    }
+
+    private fun applyRoutePointSpacing(spacing: RoutePointSpacing) {
+        if (routePointSpacing == spacing) return
+        routePointSpacing = spacing
+        selectedSourceJourney?.let { applySelectedJourney(it, selectedIgnoredCount) }
     }
 
     private fun configureDistanceUnitSelection() {
@@ -3805,7 +3956,7 @@ class MainActivity : AppCompatActivity() {
         if (save) settingsViewModel.updateDistanceUnit(preference)
         updateDistanceUnitLabel()
         editor.timelineView.renderText = currentRenderText()
-        journey?.let { editor.periodSummaryText.text = selectedPeriodSummary(it, selectedIgnoredCount) }
+        renderSelectedPeriodSummary()
         showProgress(editor.timelineSeek.progress / 1000f)
     }
 
@@ -4673,6 +4824,9 @@ class MainActivity : AppCompatActivity() {
         settingsScreen.hideDatesSwitch.isEnabled = !exporting
         settingsScreen.simplifyRouteDetailSwitch.isEnabled = !exporting
         settingsScreen.keepPastRoutesVisibleSwitch.isEnabled = !exporting
+        settingsScreen.pastRouteOpacitySlider.isEnabled = !exporting && settingsScreen.keepPastRoutesVisibleSwitch.isChecked
+        settingsScreen.zoomSmoothnessSlider.isEnabled = !exporting
+        settingsScreen.routePointSpacingSlider.isEnabled = !exporting
         renderPresetSelection()
         if (exporting) editor.videoReadyGroup.visibility = View.GONE
         if (!exporting) updateCameraPreparationUi()
@@ -4684,6 +4838,7 @@ class MainActivity : AppCompatActivity() {
         editor.timelineSeek.progress = 0
         showProgress(0f)
         journey = null
+        selectedSourceJourney = null
         animation?.cancel()
         resetCreateEntry()
         showNewVideo(loadRemembered = true)
@@ -6333,6 +6488,10 @@ class MainActivity : AppCompatActivity() {
         private const val PROJECT_ACTION_DELETE = 2
         private const val STATE_VIDEO_TITLE_EDITED = "video_title_edited_v2"
         private const val STATE_DRAFT_HIDE_DATES = "draft_hide_dates"
+        private const val STATE_DRAFT_KEEP_PAST_ROUTES = "draft_keep_past_routes"
+        private const val STATE_DRAFT_ZOOM_SMOOTHNESS = "draft_zoom_smoothness"
+        private const val STATE_DRAFT_PAST_ROUTE_OPACITY = "draft_past_route_opacity"
+        private const val STATE_DRAFT_ROUTE_POINT_SPACING = "draft_route_point_spacing"
         private const val STATE_DRAFT_DURATION = "draft_duration_v2"
         private const val STATE_SETTINGS_RETURN_TO_CREATE = "settings_return_to_create_v3"
         private const val STATE_JOURNAL_SETUP_MODE = "journal_setup_mode_v1"

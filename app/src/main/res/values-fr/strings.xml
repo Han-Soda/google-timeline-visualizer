@@ -577,6 +577,17 @@
     <string name="simplify_route_detail_summary">Utilise l’activité Timeline résumée pour créer un trajet plus clair dans les vidéos couvrant une longue période. Si cette option est désactivée, le trajet le plus détaillé disponible est utilisé.</string>
     <string name="keep_past_routes_visible">Garder les anciens trajets visibles</string>
     <string name="keep_past_routes_visible_summary">Affiche les trajets terminés sous forme de trace discrète en arrière-plan. Si cette option est désactivée, les anciens déplacements s’estompent.</string>
+    <string name="animation_settings">Caméra et animation</string>
+    <string name="animation_settings_summary">Ajustez le zoom de la caméra et le nombre de points Timeline suivis par l’animation.</string>
+    <string name="zoom_smoothness">Fluidité du zoom</string>
+    <string name="zoom_smoothness_summary">Plus la valeur est élevée, plus la caméra dézoome avant les longs trajets et zoome progressivement après l’arrivée. La valeur minimale conserve le zoom rapide d’origine.</string>
+    <string name="route_points">Points du trajet</string>
+    <string name="route_points_summary">Un espacement plus large ignore les points Timeline très proches, pour animer plus calmement les arrêts instables et les trajets denses. Tous les points conserve chaque détail.</string>
+    <string name="route_points_all">Tous les points</string>
+    <string name="route_points_spacing">Au moins %1$s d’écart</string>
+    <string name="route_points_used">%1$s points animés sur %2$s</string>
+    <string name="past_route_opacity">Opacité des anciens trajets</string>
+    <string name="route_and_overlay">Trajet et superposition</string>
     <string name="hide_dates">Masquer les dates</string>
     <string name="hide_dates_summary">Masque les dates dans la vidéo. La distance reste visible.</string>
 </resources>
