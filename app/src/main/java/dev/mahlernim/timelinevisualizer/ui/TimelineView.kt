@@ -80,10 +80,11 @@ class TimelineView @JvmOverloads constructor(
     var cameraSettings: CameraSettings = CameraSettings.DEFAULT
         set(value) {
             if (field == value) return
+            val cameraChanged = field.cameraTrackKey() != value.cameraTrackKey()
             field = value
             previewAspectRatio = value.videoQuality.aspectRatio
             markFrameDirty()
-            restartCameraPreparation()
+            if (cameraChanged) restartCameraPreparation()
         }
 
     var previewAspectRatio: Float = 1f
@@ -231,7 +232,11 @@ class TimelineView @JvmOverloads constructor(
                     coroutineContext.ensureActive()
                 }
                 withContext(Dispatchers.Main.immediate) {
-                    if (generation != cameraPreparationGeneration || journey !== data || cameraSettings != settings) {
+                    if (
+                        generation != cameraPreparationGeneration ||
+                        journey !== data ||
+                        cameraSettings.cameraTrackKey() != settings.cameraTrackKey()
+                    ) {
                         return@withContext
                     }
                     painter.installCameraPreparation(data, targetWidth, targetHeight, settings, preparation)

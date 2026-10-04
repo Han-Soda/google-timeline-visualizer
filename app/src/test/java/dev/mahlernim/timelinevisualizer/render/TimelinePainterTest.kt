@@ -76,6 +76,92 @@ class TimelinePainterTest {
     }
 
     @Test
+    fun pastRoutesStayVisibleBehindTheFadingTrail() {
+        val points = (0..100).map { point(0.0, it * 0.1) } + (1..100).map { point(it * 0.1, 10.0) }
+        val journey = Journey.from(points, 2025)
+        val size = 1080
+        fun routePixels(keepPastRoutesVisible: Boolean): Int {
+            val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+            TimelinePainter().draw(
+                canvas = Canvas(bitmap),
+                width = size,
+                height = size,
+                journey = journey,
+                frame = TimelineFrame(0.9f, 0f),
+                journeyDurationSeconds = 60,
+                title = "Timeline",
+                cameraSettings = CameraSettings.DEFAULT.copy(keepPastRoutesVisible = keepPastRoutesVisible),
+                tiles = { null },
+            )
+            var count = 0
+            for (y in 0 until size step 2) {
+                for (x in 0 until size step 2) {
+                    val color = bitmap.getPixel(x, y)
+                    if (Color.red(color) - Color.green(color) > 60) count++
+                }
+            }
+            bitmap.recycle()
+            return count
+        }
+
+        val fading = routePixels(keepPastRoutesVisible = false)
+        val kept = routePixels(keepPastRoutesVisible = true)
+
+        assertTrue("Past routes added too little: $fading to $kept route pixels", kept > fading * 3 / 2)
+    }
+
+    @Test
+    fun zoomSmoothnessEasesTransferZoomWithoutTighteningAnyFrame() {
+        val journey = multiLongHaulJourney()
+        val quick = closeUpMapSettings()
+        val smooth = quick.copy(zoomSmoothness = CameraSettings.MAX_ZOOM_SMOOTHNESS)
+        val quickTrack = TimelinePainter().buildCameraTrackForBackground(journey, SIZE, SIZE, quick).track
+        val smoothTrack = TimelinePainter().buildCameraTrackForBackground(journey, SIZE, SIZE, smooth).track
+        fun largestZoomStep(track: TimelinePainter.CameraTrack): Double = track.frames.zipWithNext()
+            .maxOf { (before, after) -> kotlin.math.abs(kotlin.math.ln(after.spanY / before.spanY)) }
+
+        assertEquals(quickTrack.frames.size, smoothTrack.frames.size)
+        quickTrack.frames.zip(smoothTrack.frames).forEachIndexed { index, (quickFrame, smoothFrame) ->
+            assertTrue("Frame $index tightened", smoothFrame.spanY >= quickFrame.spanY * (1 - 1e-9))
+        }
+        assertTrue(
+            "Smooth zoom step ${largestZoomStep(smoothTrack)} was not gentler than ${largestZoomStep(quickTrack)}",
+            largestZoomStep(smoothTrack) < largestZoomStep(quickTrack) / 3,
+        )
+        listOf(0f, 0.25f, 0.5f, 0.75f, 1f).forEach { progress ->
+            assertEquals(quickTrack.timing.distanceAt(progress), smoothTrack.timing.distanceAt(progress), 1e-9)
+        }
+    }
+
+    @Test
+    fun smoothZoomKeepsTheMarkerInTheCenterZone() {
+        val journey = multiLongHaulJourney()
+        val settings = closeUpMapSettings().copy(zoomSmoothness = CameraSettings.MAX_ZOOM_SMOOTHNESS)
+        val track = TimelinePainter().buildCameraTrackForBackground(journey, SIZE, SIZE, settings).track
+
+        track.frames.forEachIndexed { index, frame ->
+            val progress = index.toFloat() / track.frames.lastIndex
+            val marker = WebMercator.project(journey.positionAtDistance(track.timing.distanceAt(progress)).point)
+            val limit = frame.spanY * 0.20 + 1e-9
+            assertTrue("Frame $index x offset exceeded $limit", kotlin.math.abs(unwrapNear(marker.x, frame.centerX) - frame.centerX) <= limit)
+            assertTrue("Frame $index y offset exceeded $limit", kotlin.math.abs(marker.y - frame.centerY) <= limit)
+        }
+    }
+
+    @Test
+    fun smoothEndingEasesIntoTheOverview() {
+        val painter = TimelinePainter()
+        val quick = CameraSettings.DEFAULT
+        val smooth = quick.copy(zoomSmoothness = CameraSettings.MAX_ZOOM_SMOOTHNESS)
+
+        assertEquals(0.271f, painter.outroZoomEase(0.1f, quick), 0.001f)
+        assertTrue(painter.outroZoomEase(0.1f, smooth) < 0.05f)
+        assertEquals(0.5f, painter.outroZoomEase(0.5f, smooth), 1e-6f)
+        assertEquals(1f, painter.outroZoomEase(1f, quick), 0f)
+        assertEquals(1f, painter.outroZoomEase(1f, smooth), 0f)
+    }
+
+    @Test
     fun overviewStrokeDoesNotBridgeAJournalRouteBreak() {
         val journey = Journey.fromSections(
             listOf(

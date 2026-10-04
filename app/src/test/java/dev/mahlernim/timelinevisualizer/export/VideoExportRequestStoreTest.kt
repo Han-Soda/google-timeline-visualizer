@@ -71,6 +71,8 @@ class VideoExportRequestStoreTest {
                 tripDetection = TripDetection.SENSITIVE,
                 localFraming = LocalFraming.CLOSE,
                 keepPastRoutesVisible = true,
+                zoomSmoothness = 75,
+                pastRouteOpacity = 80,
             ),
             projectId = "trip-123",
             presetName = "Cinematic",
@@ -289,6 +291,8 @@ class VideoExportRequestStoreTest {
         val restored = store.load()!!
         assertEquals(false, restored.renderText.hideDates)
         assertEquals(true, restored.cameraSettings.keepPastRoutesVisible)
+        assertEquals(0, restored.cameraSettings.zoomSmoothness)
+        assertEquals(CameraSettings.DEFAULT_PAST_ROUTE_OPACITY, restored.cameraSettings.pastRouteOpacity)
     }
 
     @Test
