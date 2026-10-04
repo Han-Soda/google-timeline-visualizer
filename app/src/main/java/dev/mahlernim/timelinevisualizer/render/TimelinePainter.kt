@@ -255,8 +255,9 @@ class TimelinePainter {
     }
 
     /**
-     * Smoother settings blend toward a smoothstep, which eases into the ending zoom-out and halves
-     * its fastest zoom rate compared with the original ease-out.
+     * Smoother settings blend toward a smoothstep, which starts the ending zoom-out from rest and
+     * halves its fastest zoom rate compared with the original ease-out. Half smoothness and above
+     * use the smoothstep alone.
      */
     internal fun outroZoomEase(progress: Float, cameraSettings: CameraSettings): Float {
         val quick = easeOutCubic(progress)
@@ -265,7 +266,7 @@ class TimelinePainter {
             CameraSettings.MAX_ZOOM_SMOOTHNESS.toFloat()
         val amount = progress.coerceIn(0f, 1f)
         val gentle = amount * amount * (3f - 2f * amount)
-        return quick + (gentle - quick) * smoothness
+        return quick + (gentle - quick) * (smoothness * 2f).coerceAtMost(1f)
     }
 
     private fun lightweightViewport(

@@ -156,6 +156,12 @@ class TimelinePainterTest {
 
         assertEquals(0.271f, painter.outroZoomEase(0.1f, quick), 0.001f)
         assertTrue(painter.outroZoomEase(0.1f, smooth) < 0.05f)
+        assertEquals(
+            painter.outroZoomEase(0.1f, smooth),
+            painter.outroZoomEase(0.1f, quick.copy(zoomSmoothness = CameraSettings.DEFAULT_ZOOM_SMOOTHNESS)),
+            1e-6f,
+        )
+        assertTrue(painter.outroZoomEase(0.1f, quick.copy(zoomSmoothness = 20)) > painter.outroZoomEase(0.1f, smooth))
         assertEquals(0.5f, painter.outroZoomEase(0.5f, smooth), 1e-6f)
         assertEquals(1f, painter.outroZoomEase(1f, quick), 0f)
         assertEquals(1f, painter.outroZoomEase(1f, smooth), 0f)
