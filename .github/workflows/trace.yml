@@ -18,6 +18,9 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Goes into the version name, e.g. 1.1-c1d4b8d, and names the APK.
+      TRACE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
@@ -28,15 +31,25 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - name: Test, lint and build
         run: ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease --stacktrace
+      # One APK named after its commit, so downloads from different runs can't be mixed up.
+      - name: Name the APK after its commit
+        id: apk
+        run: |
+          name="trace-${TRACE_COMMIT::7}"
+          mkdir -p "$RUNNER_TEMP/apk"
+          cp app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/apk/$name.apk"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: trace-apk
-          path: |
-            trace/app/build/outputs/apk/release/*.apk
-            trace/app/build/outputs/apk/debug/*.apk
-            trace/app/build/reports/lint-results-debug.html
-          if-no-files-found: warn
+          name: ${{ steps.apk.outputs.name }}
+          path: ${{ runner.temp }}/apk/*.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: trace-lint
+          path: trace/app/build/reports/lint-results-debug.html
+          if-no-files-found: ignore
 
   export-on-device:
     runs-on: ubuntu-latest
