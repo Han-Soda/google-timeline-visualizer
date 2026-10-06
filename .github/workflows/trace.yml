@@ -2,6 +2,7 @@ name: Trace
 
 on:
   push:
+    branches: [main]
     paths: ["trace/**", ".github/workflows/trace.yml"]
   pull_request:
     paths: ["trace/**", ".github/workflows/trace.yml"]
@@ -23,7 +24,7 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
+      # The runner image already has the Android SDK; Gradle fetches anything missing.
       - uses: gradle/actions/setup-gradle@v5
       - name: Test, lint and build
         run: ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease --stacktrace
