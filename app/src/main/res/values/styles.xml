@@ -54,7 +54,7 @@
     </style>
 
     <!-- Settings screen building blocks. -->
-    <style name="TimelineVisualizer.SectionTitle">
+    <style name="TimelineVisualizer.SectionTitle" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">28dp</item>
@@ -65,7 +65,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TimelineVisualizer.SectionSummary">
+    <style name="TimelineVisualizer.SectionSummary" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">2dp</item>
@@ -81,7 +81,7 @@
         <item name="android:layout_marginTop">12dp</item>
     </style>
 
-    <style name="TimelineVisualizer.SettingsCardContent">
+    <style name="TimelineVisualizer.SettingsCardContent" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
@@ -91,7 +91,7 @@
         <item name="android:paddingBottom">16dp</item>
     </style>
 
-    <style name="TimelineVisualizer.SettingSummary">
+    <style name="TimelineVisualizer.SettingSummary" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">2dp</item>
@@ -99,14 +99,14 @@
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
-    <style name="TimelineVisualizer.SliderLabel">
+    <style name="TimelineVisualizer.SliderLabel" parent="">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textAppearance">?attr/textAppearanceTitleSmall</item>
     </style>
 
-    <style name="TimelineVisualizer.SliderValue">
+    <style name="TimelineVisualizer.SliderValue" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">12dp</item>
@@ -115,7 +115,7 @@
         <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 
-    <style name="TimelineVisualizer.SettingsDivider">
+    <style name="TimelineVisualizer.SettingsDivider" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">14dp</item>
