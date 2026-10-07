@@ -29,20 +29,43 @@ jobs:
           java-version: "17"
       # The runner image already has the Android SDK; Gradle fetches anything missing.
       - uses: gradle/actions/setup-gradle@v5
+      # Google Play needs a bigger version code for every upload, and a release key. With the
+      # upload key in the repository's secrets, the bundle and APK are signed with it;
+      # without, with the development key, for trying out only.
+      - name: Version and signing
+        env:
+          UPLOAD_KEY: ${{ secrets.TRACE_UPLOAD_KEY }}
+          UPLOAD_PASSWORD: ${{ secrets.TRACE_UPLOAD_PASSWORD }}
+        run: |
+          echo "TRACE_VERSION_CODE=$((100 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
+          if [ -n "$UPLOAD_KEY" ]; then
+            echo "$UPLOAD_KEY" | base64 -d > "$RUNNER_TEMP/upload.p12"
+            {
+              echo "TRACE_KEYSTORE=$RUNNER_TEMP/upload.p12"
+              echo "TRACE_KEYSTORE_PASSWORD=$UPLOAD_PASSWORD"
+              echo "TRACE_KEY_ALIAS=upload"
+              echo "TRACE_KEY_PASSWORD=$UPLOAD_PASSWORD"
+            } >> "$GITHUB_ENV"
+          else
+            echo "::warning::No upload key in the secrets: signed with the development key, not for Google Play."
+          fi
       - name: Test, lint and build
-        run: ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease --stacktrace
-      # One APK named after its commit, so downloads from different runs can't be mixed up.
-      - name: Name the APK after its commit
+        run: ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease bundleRelease --stacktrace
+      # One APK and one bundle for Google Play, named after their commit, so downloads from
+      # different runs can't be mixed up, with the R8 mapping for Play's crash reports.
+      - name: Name the APK and bundle after their commit
         id: apk
         run: |
           name="trace-${TRACE_COMMIT::7}"
           mkdir -p "$RUNNER_TEMP/apk"
           cp app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/apk/$name.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "$RUNNER_TEMP/apk/$name.aab"
+          cp app/build/outputs/mapping/release/mapping.txt "$RUNNER_TEMP/apk/$name-mapping.txt"
           echo "name=$name" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.apk.outputs.name }}
-          path: ${{ runner.temp }}/apk/*.apk
+          path: ${{ runner.temp }}/apk/*
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         if: failure()
@@ -78,3 +101,65 @@ jobs:
           disable-animations: true
           working-directory: trace
           script: ./gradlew connectedDebugAndroidTest --stacktrace
+
+  # Phone screenshots for the Play listing, in English and Russian, taken from the app itself
+  # with a made-up trip, at 1080 × 1920. Run the workflow by hand to take them.
+  store-screenshots:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v5
+      - name: Enable KVM
+        working-directory: .
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Take the screenshots
+        uses: ReactiveCircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          working-directory: trace
+          # Whatever was taken is kept, even when the test stops part way.
+          script: >-
+            ./gradlew connectedDebugAndroidTest --stacktrace
+            -Pandroid.testInstrumentationRunnerArguments.class=io.github.hansoda.trace.StoreScreenshots
+            -Pandroid.testInstrumentationRunnerArguments.screenshots=true;
+            code=$?; adb pull /sdcard/Pictures/Trace "$RUNNER_TEMP/screenshots"; exit $code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: store-screenshots
+          path: ${{ runner.temp }}/screenshots/*.png
+          if-no-files-found: error
+      # Small copies in the log, to check the screenshots where the artifact can't be opened.
+      - name: Contact sheet
+        if: always()
+        working-directory: .
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install --quiet pillow
+          "$RUNNER_TEMP/venv/bin/python" - "$RUNNER_TEMP/screenshots" <<'EOF'
+          import base64, io, pathlib, sys
+          from PIL import Image
+          for language in ("en", "ru"):
+              files = sorted(pathlib.Path(sys.argv[1]).glob(language + "-*.png"))
+              sheet = Image.new("RGB", (len(files) * 190, 330), "white")
+              for i, file in enumerate(files):
+                  sheet.paste(Image.open(file).convert("RGB").resize((180, 320)), (i * 190, 5))
+              out = io.BytesIO()
+              sheet.save(out, "JPEG", quality=60)
+              text = base64.b64encode(out.getvalue()).decode()
+              print(language, [file.name for file in files])
+              for k in range(0, len(text), 100):
+                  print("SHEET-" + language + ":" + text[k:k + 100])
+          EOF
