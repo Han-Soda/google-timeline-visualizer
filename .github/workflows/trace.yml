@@ -157,6 +157,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A "$folder"
           git diff --cached --quiet && exit 0
-          git commit -m "Store screenshots from run $GITHUB_RUN_NUMBER"
+          # Pictures only: nothing for the other jobs to check again.
+          git commit -m "Store screenshots from run $GITHUB_RUN_NUMBER [skip ci]"
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin "HEAD:$GITHUB_REF_NAME"
