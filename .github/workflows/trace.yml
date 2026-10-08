@@ -130,8 +130,6 @@ jobs:
           api-level: 35
           arch: x86_64
           profile: pixel_2
-          # A British phone: 24-hour times and day-month dates, natural in both languages.
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -change-locale en-GB
           disable-animations: true
           working-directory: trace
           # Whatever was taken is kept, even when the test stops part way.
