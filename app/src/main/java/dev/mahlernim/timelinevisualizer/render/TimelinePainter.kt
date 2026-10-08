@@ -23,6 +23,7 @@ import kotlin.math.ln
 import kotlin.math.log2
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 data class TileId(val zoom: Int, val x: Int, val y: Int)
 data class VisibleTile(val id: TileId, val worldX: Int)
@@ -54,25 +55,25 @@ class TimelinePainter {
     private val oldTrailPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.rgb(233, 0, 100)
         style = Paint.Style.STROKE
-        strokeWidth = 4f
+        strokeWidth = OLD_TRAIL_WIDTH
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
         alpha = 55
     }
     private val middleTrailPaint = Paint(oldTrailPaint).apply {
-        strokeWidth = 6f
+        strokeWidth = MIDDLE_TRAIL_WIDTH
         alpha = 135
     }
     private val recentTrailPaint = Paint(oldTrailPaint).apply {
-        strokeWidth = 8f
+        strokeWidth = RECENT_TRAIL_WIDTH
         alpha = 255
     }
     private val pastRoutePaint = Paint(oldTrailPaint).apply {
-        strokeWidth = 4f
-        alpha = 34
+        strokeWidth = PAST_ROUTE_WIDTH
+        alpha = pastRouteAlpha(CameraSettings.DEFAULT_PAST_ROUTE_OPACITY)
     }
     private val overviewRoutePaint = Paint(oldTrailPaint).apply {
-        strokeWidth = 3.5f
+        strokeWidth = OVERVIEW_ROUTE_WIDTH
         alpha = 255
     }
     private val overviewCompositePaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -84,7 +85,7 @@ class TimelinePainter {
     private val headRingPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.rgb(233, 0, 100)
         style = Paint.Style.STROKE
-        strokeWidth = 5f
+        strokeWidth = HEAD_RING_WIDTH
     }
     private val titlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.rgb(36, 25, 29)
@@ -181,6 +182,25 @@ class TimelinePainter {
 
     private fun overlayScale(width: Int, height: Int): Float = min(width, height) / 720f
 
+    /**
+     * Route strokes keep their 480-pixel thickness on smaller frames and grow proportionally on
+     * larger ones, so high-resolution exports and previews show the same trail as a 480p video.
+     */
+    private fun applyRouteStyle(width: Int, height: Int, cameraSettings: CameraSettings) {
+        val scale = max(1f, min(width, height) / ROUTE_REFERENCE_EDGE)
+        oldTrailPaint.strokeWidth = OLD_TRAIL_WIDTH * scale
+        middleTrailPaint.strokeWidth = MIDDLE_TRAIL_WIDTH * scale
+        recentTrailPaint.strokeWidth = RECENT_TRAIL_WIDTH * scale
+        pastRoutePaint.strokeWidth = PAST_ROUTE_WIDTH * scale
+        overviewRoutePaint.strokeWidth = OVERVIEW_ROUTE_WIDTH * scale
+        headRingPaint.strokeWidth = HEAD_RING_WIDTH * scale
+        pastRoutePaint.alpha = pastRouteAlpha(cameraSettings.pastRouteOpacity)
+    }
+
+    private fun pastRouteAlpha(opacityPercent: Int): Int =
+        (opacityPercent.coerceIn(CameraSettings.MIN_PAST_ROUTE_OPACITY, CameraSettings.MAX_PAST_ROUTE_OPACITY) * 255 /
+            CameraSettings.MAX_PAST_ROUTE_OPACITY.toFloat()).roundToInt()
+
     internal fun overlayCard(width: Int, height: Int): RectF {
         val scale = overlayScale(width, height)
         val cardWidth = min(width - CARD_SIDE_INSET * 2f * scale, MAX_CARD_WIDTH * scale)
@@ -228,10 +248,25 @@ class TimelinePainter {
         return blendViewport(
             journeyViewport,
             overviewViewport(journey, width, height),
-            easeOutCubic(frame.outroProgress),
+            outroZoomEase(frame.outroProgress, cameraSettings),
             width,
             height,
         )
+    }
+
+    /**
+     * Smoother settings blend toward a smoothstep, which starts the ending zoom-out from rest and
+     * halves its fastest zoom rate compared with the original ease-out. Half smoothness and above
+     * use the smoothstep alone.
+     */
+    internal fun outroZoomEase(progress: Float, cameraSettings: CameraSettings): Float {
+        val quick = easeOutCubic(progress)
+        val smoothness = cameraSettings.zoomSmoothness
+            .coerceIn(CameraSettings.MIN_ZOOM_SMOOTHNESS, CameraSettings.MAX_ZOOM_SMOOTHNESS) /
+            CameraSettings.MAX_ZOOM_SMOOTHNESS.toFloat()
+        val amount = progress.coerceIn(0f, 1f)
+        val gentle = amount * amount * (3f - 2f * amount)
+        return quick + (gentle - quick) * (smoothness * 2f).coerceAtMost(1f)
     }
 
     private fun lightweightViewport(
@@ -401,7 +436,7 @@ class TimelinePainter {
             cachedCameraJourney === journey &&
                 cachedCameraWidth == width &&
                 cachedCameraHeight == height &&
-                cachedCameraSettings == cameraSettings
+                cachedCameraSettings == cameraSettings.cameraTrackKey()
         } ?: return null
         return DurationRecommendation.recommend(
             frames = track.frames,
@@ -442,7 +477,7 @@ class TimelinePainter {
             cachedCameraJourney === journey &&
             cachedCameraWidth == width &&
             cachedCameraHeight == height &&
-            cachedCameraSettings == cameraSettings
+            cachedCameraSettings == cameraSettings.cameraTrackKey()
         ) {
             installTiming(journey, cameraSettings, cachedCameraTrack!!.timing)
             return cachedCameraTrack!!
@@ -451,7 +486,7 @@ class TimelinePainter {
         cachedCameraJourney = journey
         cachedCameraWidth = width
         cachedCameraHeight = height
-        cachedCameraSettings = cameraSettings
+        cachedCameraSettings = cameraSettings.cameraTrackKey()
         cachedCameraTrack = track
         return track
     }
@@ -466,7 +501,7 @@ class TimelinePainter {
             cachedCameraJourney === journey &&
             cachedCameraWidth == width &&
             cachedCameraHeight == height &&
-            cachedCameraSettings == cameraSettings
+            cachedCameraSettings == cameraSettings.cameraTrackKey()
         } ?: return null
         installTiming(journey, cameraSettings, track.timing)
         return track
@@ -495,7 +530,7 @@ class TimelinePainter {
         cachedCameraJourney = journey
         cachedCameraWidth = width
         cachedCameraHeight = height
-        cachedCameraSettings = cameraSettings
+        cachedCameraSettings = cameraSettings.cameraTrackKey()
         cachedCameraTrack = preparation.track
         installTiming(journey, cameraSettings, preparation.timing)
     }
@@ -740,14 +775,11 @@ class TimelinePainter {
         episodeLegs: List<JourneyLeg>,
         arrivalPlans: List<ProtectedArrivalPlan>,
     ): List<CameraFrame> {
-        val frames = ArrayList<CameraFrame>(baseFrames.size)
-        var previous: CameraFrame? = null
-        baseFrames.forEachIndexed { index, originalBase ->
-            val actualProgress = index.toFloat() / baseFrames.lastIndex.coerceAtLeast(1)
-            val base = episodeAlignedFrame(
+        val alignedFrames = baseFrames.mapIndexed { index, originalBase ->
+            episodeAlignedFrame(
                 journey,
                 cameraSettings,
-                actualProgress,
+                index.toFloat() / baseFrames.lastIndex.coerceAtLeast(1),
                 originalBase,
                 width,
                 height,
@@ -755,6 +787,12 @@ class TimelinePainter {
                 episodeLegs,
                 arrivalPlans,
             )
+        }
+        val smoothedFrames = smoothCameraZoom(alignedFrames, cameraSettings, width, aspect)
+        val frames = ArrayList<CameraFrame>(baseFrames.size)
+        var previous: CameraFrame? = null
+        smoothedFrames.forEachIndexed { index, base ->
+            val actualProgress = index.toFloat() / baseFrames.lastIndex.coerceAtLeast(1)
             val projectedMarker = WebMercator.project(
                 playbackPosition(journey, actualProgress, cameraSettings).point,
             )
@@ -788,6 +826,33 @@ class TimelinePainter {
             previous = frame
         }
         return frames
+    }
+
+    private fun smoothCameraZoom(
+        frames: List<CameraFrame>,
+        cameraSettings: CameraSettings,
+        width: Int,
+        aspect: Double,
+    ): List<CameraFrame> {
+        val radius = CameraZoomSmoothing.radiusSamples(cameraSettings.zoomSmoothness, frames.size)
+        if (radius <= 0 || cameraSettings.cameraMovement.fixedZoom) return frames
+        val smoothedLogSpans = CameraZoomSmoothing.smoothLogSpans(
+            DoubleArray(frames.size) { ln(frames[it].spanY) },
+            radius,
+        )
+        val minimumSpan = cameraSettings.cameraMovement.minimumViewportSpan
+        var previousZoom = 0
+        return frames.mapIndexed { index, frame ->
+            val spanY = kotlin.math.exp(smoothedLogSpans[index])
+                .coerceIn(minOf(minimumSpan, frame.spanY), maxOf(MAX_VIEWPORT_SPAN, frame.spanY))
+            val zoom = if (index == 0) {
+                tileZoom(width, aspect, spanY)
+            } else {
+                stabilizedTileZoom(previousZoom, log2(width.coerceAtLeast(1) / (256.0 * spanY * aspect)))
+            }
+            previousZoom = zoom
+            frame.copy(spanY = spanY, zoom = zoom)
+        }
     }
 
     private fun episodeAlignedFrame(
@@ -1144,6 +1209,7 @@ class TimelinePainter {
         tiles: (TileId) -> Bitmap?,
     ) {
         if (journey.points.isEmpty() || width <= 0 || height <= 0) return
+        applyRouteStyle(width, height, cameraSettings)
         val viewport = viewport(journey, frame, width, height, cameraSettings, allowCameraTrackBuild)
         val prepared = if (allowCameraTrackBuild) prepare(journey) else null
         drawBackground(canvas, width, height)
@@ -1655,6 +1721,13 @@ class TimelinePainter {
     )
 
     companion object {
+        private const val ROUTE_REFERENCE_EDGE = 480f
+        private const val OLD_TRAIL_WIDTH = 4f
+        private const val MIDDLE_TRAIL_WIDTH = 6f
+        private const val RECENT_TRAIL_WIDTH = 8f
+        private const val PAST_ROUTE_WIDTH = 4.5f
+        private const val OVERVIEW_ROUTE_WIDTH = 3.5f
+        private const val HEAD_RING_WIDTH = 5f
         private const val PAST_ROUTE_CHUNK_POINTS = 256
         private const val TRANSFER_PADDING = 2.8
         private const val EPISODE_DEPARTURE_LEAD_FRACTION = 0.15

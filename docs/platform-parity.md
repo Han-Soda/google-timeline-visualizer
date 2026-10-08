@@ -10,6 +10,9 @@ system integrations remain explicit instead of being hidden behind silent fallba
 | Raw location fallback and conservative filtering | Yes | Yes | Yes |
 | Exact dates and cross-year periods | Yes | Yes | Yes |
 | Fixed, Balanced, Active, and Close-up cameras | Yes | Yes | Yes |
+| Adjustable zoom smoothness | Yes | No | No |
+| Route point spacing | Yes | No | No |
+| Kept past routes with adjustable opacity | Yes | No | No |
 | Android-aligned visual pacing | Canonical | Default | Camera-aligned |
 | Kilometers and miles | Yes | Yes | Yes, including Automatic |
 | Total duration from 10 through 300 seconds | Yes | Yes | Advanced; simple mode offers 10, 15, or 30 seconds |
@@ -25,7 +28,11 @@ system integrations remain explicit instead of being hidden behind silent fallba
 | Background export and notifications | Yes | No | No |
 | On-device video library | Yes | No | No |
 
-The Android-only rows depend on persistent private application storage or Android
+Zoom smoothness, route point spacing, and kept past routes are portable rendering
+choices that currently ship only on Android; port them with matching tests before
+marking them supported elsewhere.
+
+The remaining Android-only rows depend on persistent private application storage or Android
 services. They are not parity defects for the CLI or web app. A future port should
 be treated as a separate product design and privacy review.
 

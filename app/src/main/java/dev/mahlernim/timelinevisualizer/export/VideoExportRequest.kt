@@ -74,6 +74,8 @@ class VideoExportRequestStore internal constructor(
                 output.writeBoolean(exportFormat.customFrameRate)
             }
             output.writeBoolean(request.cameraSettings.keepPastRoutesVisible)
+            output.writeInt(request.cameraSettings.zoomSmoothness)
+            output.writeInt(request.cameraSettings.pastRouteOpacity)
             output.writeBoolean(request.projectId != null)
             request.projectId?.let(output::writeUTF)
             output.writeBoolean(request.presetName != null)
@@ -183,6 +185,22 @@ class VideoExportRequestStore internal constructor(
                             ExportFormatSettings.fromLegacy(quality)
                         }
                         val keepPastRoutesVisible = if (version >= 14) input.readBoolean() else false
+                        val zoomSmoothness = if (version >= 18) {
+                            input.readInt().coerceIn(
+                                CameraSettings.MIN_ZOOM_SMOOTHNESS,
+                                CameraSettings.MAX_ZOOM_SMOOTHNESS,
+                            )
+                        } else {
+                            0
+                        }
+                        val pastRouteOpacity = if (version >= 18) {
+                            input.readInt().coerceIn(
+                                CameraSettings.MIN_PAST_ROUTE_OPACITY,
+                                CameraSettings.MAX_PAST_ROUTE_OPACITY,
+                            )
+                        } else {
+                            CameraSettings.DEFAULT_PAST_ROUTE_OPACITY
+                        }
                         CameraSettings(
                             cameraMovement = movement,
                             longTripCompression = compression,
@@ -195,6 +213,8 @@ class VideoExportRequestStore internal constructor(
                                 LocalFraming.OFF
                             },
                             keepPastRoutesVisible = keepPastRoutesVisible,
+                            zoomSmoothness = zoomSmoothness,
+                            pastRouteOpacity = pastRouteOpacity,
                         )
                     } else if (version == 3) {
                         repeat(4) { input.readUTF() }
@@ -291,7 +311,7 @@ class VideoExportRequestStore internal constructor(
     }
 
     companion object {
-        private const val CURRENT_FILE_VERSION = 17
+        private const val CURRENT_FILE_VERSION = 18
         private const val MAX_POINT_COUNT = 2_000_000
         private const val MAX_SEMANTIC_EPISODE_COUNT = 100_000
         private const val REQUEST_FILE = "pending-video-export.bin"

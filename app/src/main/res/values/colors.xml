@@ -1,16 +1,43 @@
 <resources>
     <color name="brand">#E90064</color>
-    <color name="interactive">#D0005A</color>
+    <color name="interactive">#BB004F</color>
     <color name="on_interactive">#FFFFFF</color>
-    <color name="surface">#FFF8FA</color>
-    <color name="surface_container">#F7EEF1</color>
-    <color name="on_surface">#24191D</color>
-    <color name="on_surface_variant">#574147</color>
-    <color name="outline">#8A7078</color>
-    <color name="thumbnail_surface">#E7E0E2</color>
+    <color name="surface">#FFF8F7</color>
+    <color name="surface_container">#FBEAEB</color>
+    <color name="on_surface">#22191B</color>
+    <color name="on_surface_variant">#524345</color>
+    <color name="outline">#847375</color>
+    <color name="thumbnail_surface">#F0DEE0</color>
     <color name="map_surface">#EEE8EA</color>
     <color name="onboarding_route">#E90064</color>
     <color name="onboarding_paper">#F7EBE4</color>
     <color name="onboarding_ink">#1E1220</color>
     <color name="onboarding_muted">#A98A9C</color>
+
+    <!-- Material 3 roles generated from the brand color #E90064 (content primary, tonal neutrals). -->
+    <color name="theme_primary_container">#FFD9DE</color>
+    <color name="theme_on_primary_container">#3F0016</color>
+    <color name="theme_inverse_primary">#FFB2BF</color>
+    <color name="theme_secondary">#75565B</color>
+    <color name="theme_on_secondary">#FFFFFF</color>
+    <color name="theme_secondary_container">#FFD9DE</color>
+    <color name="theme_on_secondary_container">#2B1519</color>
+    <color name="theme_tertiary">#7A5832</color>
+    <color name="theme_on_tertiary">#FFFFFF</color>
+    <color name="theme_tertiary_container">#FFDCBB</color>
+    <color name="theme_on_tertiary_container">#2C1700</color>
+    <color name="theme_error">#BA1A1A</color>
+    <color name="theme_on_error">#FFFFFF</color>
+    <color name="theme_error_container">#FFDAD6</color>
+    <color name="theme_on_error_container">#93000A</color>
+    <color name="theme_surface_variant">#F3DDE0</color>
+    <color name="theme_outline_variant">#D6C2C4</color>
+    <color name="theme_inverse_surface">#382E2F</color>
+    <color name="theme_inverse_on_surface">#FEEDEE</color>
+    <color name="theme_surface_dim">#E7D6D7</color>
+    <color name="theme_surface_bright">#FFF8F7</color>
+    <color name="theme_surface_container_lowest">#FFFFFF</color>
+    <color name="theme_surface_container_low">#FFF0F1</color>
+    <color name="theme_surface_container_high">#F5E4E6</color>
+    <color name="theme_surface_container_highest">#F0DEE0</color>
 </resources>

@@ -567,6 +567,17 @@
     <string name="simplify_route_detail_summary">在長時間範圍的影片中使用摘要後的時間軸活動來產生更清晰的路線。關閉時使用可用的最詳細路線。</string>
     <string name="keep_past_routes_visible">保留過去的路線</string>
     <string name="keep_past_routes_visible_summary">將已完成的路線顯示為淡色背景軌跡。關閉時，較早的移動會逐漸消失。</string>
+    <string name="animation_settings">鏡頭與動畫</string>
+    <string name="animation_settings_summary">微調鏡頭的縮放方式，以及動畫依循的時間軸紀錄點數量。</string>
+    <string name="zoom_smoothness">縮放平滑度</string>
+    <string name="zoom_smoothness_summary">數值越高，長途移動前會提前拉遠，抵達後再逐漸拉近。設為最低時保留原本的快速縮放。</string>
+    <string name="route_points">路線紀錄點</string>
+    <string name="route_points_summary">間距越大，越會略過彼此靠近的時間軸紀錄點，讓晃動的停留與密集的路線動畫更平穩。選擇「所有紀錄點」可保留所有細節。</string>
+    <string name="route_points_all">所有紀錄點</string>
+    <string name="route_points_spacing">間隔至少 %1$s</string>
+    <string name="route_points_used">動畫使用 %2$s 個紀錄點中的 %1$s 個</string>
+    <string name="past_route_opacity">過去路線的不透明度</string>
+    <string name="route_and_overlay">路線與疊加資訊</string>
     <string name="hide_dates">隱藏日期</string>
     <string name="hide_dates_summary">隱藏影片中的日期，距離仍會顯示。</string>
 </resources>

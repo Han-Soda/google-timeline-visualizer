@@ -606,6 +606,17 @@
     <string name="simplify_route_detail_summary">Dùng hoạt động Dòng thời gian đã tóm tắt để có tuyến đường gọn hơn trong video lịch sử dài. Khi tắt, tuyến đường chi tiết nhất hiện có sẽ được dùng.</string>
     <string name="keep_past_routes_visible">Giữ các tuyến đường trước đó hiển thị</string>
     <string name="keep_past_routes_visible_summary">Hiển thị các tuyến đường đã hoàn thành thành vệt nền mờ. Khi tắt, chuyển động cũ dần mờ đi.</string>
+    <string name="animation_settings">Camera và hoạt ảnh</string>
+    <string name="animation_settings_summary">Tinh chỉnh cách camera thu phóng và số điểm Dòng thời gian mà hoạt ảnh đi theo.</string>
+    <string name="zoom_smoothness">Độ mượt khi thu phóng</string>
+    <string name="zoom_smoothness_summary">Giá trị cao hơn sẽ thu nhỏ trước các chuyến đi dài và phóng to dần sau khi đến nơi. Giá trị thấp nhất giữ kiểu thu phóng nhanh ban đầu.</string>
+    <string name="route_points">Điểm tuyến đường</string>
+    <string name="route_points_summary">Khoảng cách lớn hơn sẽ bỏ qua các điểm Dòng thời gian nằm gần nhau, giúp những lần dừng bị dao động và tuyến đường dày đặc chuyển động êm hơn. Tất cả điểm giữ mọi chi tiết.</string>
+    <string name="route_points_all">Tất cả điểm</string>
+    <string name="route_points_spacing">Cách nhau ít nhất %1$s</string>
+    <string name="route_points_used">Đang tạo hoạt ảnh với %1$s/%2$s điểm</string>
+    <string name="past_route_opacity">Độ mờ đục của tuyến đường trước đó</string>
+    <string name="route_and_overlay">Tuyến đường và lớp phủ</string>
     <plurals name="videos_added">
         <item quantity="other">Đã thêm %1$d video</item>
     </plurals>

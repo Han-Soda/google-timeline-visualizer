@@ -1,10 +1,36 @@
 <resources>
-    <color name="interactive">#FFB1C8</color>
-    <color name="on_interactive">#65002A</color>
-    <color name="surface">#1B1115</color>
-    <color name="surface_container">#281B20</color>
-    <color name="on_surface">#F1DEE4</color>
-    <color name="on_surface_variant">#D9C1C9</color>
-    <color name="outline">#A58A93</color>
-    <color name="thumbnail_surface">#3A3034</color>
+    <color name="interactive">#FFB2BF</color>
+    <color name="on_interactive">#660028</color>
+    <color name="surface">#191113</color>
+    <color name="surface_container">#261D1F</color>
+    <color name="on_surface">#F0DEE0</color>
+    <color name="on_surface_variant">#D6C2C4</color>
+    <color name="outline">#9F8C8E</color>
+    <color name="thumbnail_surface">#3C3234</color>
+
+    <color name="theme_primary_container">#90003B</color>
+    <color name="theme_on_primary_container">#FFD9DE</color>
+    <color name="theme_inverse_primary">#BB004F</color>
+    <color name="theme_secondary">#E4BDC2</color>
+    <color name="theme_on_secondary">#43292E</color>
+    <color name="theme_secondary_container">#5C3F44</color>
+    <color name="theme_on_secondary_container">#FFD9DE</color>
+    <color name="theme_tertiary">#EBBE90</color>
+    <color name="theme_on_tertiary">#462A08</color>
+    <color name="theme_tertiary_container">#5F401D</color>
+    <color name="theme_on_tertiary_container">#FFDCBB</color>
+    <color name="theme_error">#FFB4AB</color>
+    <color name="theme_on_error">#690005</color>
+    <color name="theme_error_container">#93000A</color>
+    <color name="theme_on_error_container">#FFDAD6</color>
+    <color name="theme_surface_variant">#524345</color>
+    <color name="theme_outline_variant">#524345</color>
+    <color name="theme_inverse_surface">#F0DEE0</color>
+    <color name="theme_inverse_on_surface">#382E2F</color>
+    <color name="theme_surface_dim">#191113</color>
+    <color name="theme_surface_bright">#413738</color>
+    <color name="theme_surface_container_lowest">#140C0D</color>
+    <color name="theme_surface_container_low">#22191B</color>
+    <color name="theme_surface_container_high">#312829</color>
+    <color name="theme_surface_container_highest">#3C3234</color>
 </resources>

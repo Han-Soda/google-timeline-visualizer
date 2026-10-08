@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -14,10 +16,7 @@
         android:paddingBottom="28dp">
 
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/advanced_video_settings" android:textAppearance="?attr/textAppearanceHeadlineSmall" android:textStyle="bold" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:layout_marginBottom="16dp" android:text="@string/advanced_video_settings_summary" android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/hideDatesSwitch" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/hide_dates" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/hide_dates_summary" android:textAppearance="?attr/textAppearanceBodySmall" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:layout_marginBottom="16dp" android:text="@string/advanced_video_settings_summary" android:textAppearance="?attr/textAppearanceBodyMedium" android:textColor="?attr/colorOnSurfaceVariant" />
 
         <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/aspect_ratio">
             <AutoCompleteTextView android:id="@+id/aspectRatioDropdown" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="none" />
@@ -25,7 +24,7 @@
         <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:hint="@string/map_view">
             <AutoCompleteTextView android:id="@+id/cameraMovementDropdown" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/automatic_visual_pacing_summary" android:textAppearance="?attr/textAppearanceBodySmall" />
+        <TextView style="@style/TimelineVisualizer.SettingSummary" android:layout_marginTop="4dp" android:text="@string/automatic_visual_pacing_summary" />
         <com.google.android.material.textfield.TextInputLayout android:id="@+id/tripDetectionInputLayout" style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:hint="@string/trip_detection" android:visibility="gone">
             <AutoCompleteTextView android:id="@+id/tripDetectionDropdown" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -42,7 +41,35 @@
             <AutoCompleteTextView android:id="@+id/frameRateDropdown" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:orientation="horizontal">
+        <TextView style="@style/TimelineVisualizer.SectionTitle" android:layout_marginTop="24dp" android:paddingStart="0dp" android:paddingEnd="0dp" android:accessibilityHeading="true" android:text="@string/animation_settings" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:gravity="center_vertical" android:orientation="horizontal">
+            <TextView style="@style/TimelineVisualizer.SliderLabel" android:text="@string/zoom_smoothness" />
+            <TextView android:id="@+id/zoomSmoothnessValue" style="@style/TimelineVisualizer.SliderValue" tools:text="60%" />
+        </LinearLayout>
+        <com.google.android.material.slider.Slider android:id="@+id/zoomSmoothnessSlider" android:layout_width="match_parent" android:layout_height="wrap_content" android:contentDescription="@string/zoom_smoothness" android:stepSize="5" android:value="60" android:valueFrom="0" android:valueTo="100" app:labelBehavior="gone" />
+        <TextView style="@style/TimelineVisualizer.SettingSummary" android:text="@string/zoom_smoothness_summary" />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:gravity="center_vertical" android:orientation="horizontal">
+            <TextView style="@style/TimelineVisualizer.SliderLabel" android:text="@string/route_points" />
+            <TextView android:id="@+id/routePointSpacingValue" style="@style/TimelineVisualizer.SliderValue" tools:text="All points" />
+        </LinearLayout>
+        <com.google.android.material.slider.Slider android:id="@+id/routePointSpacingSlider" android:layout_width="match_parent" android:layout_height="wrap_content" android:contentDescription="@string/route_points" android:stepSize="1" android:value="0" android:valueFrom="0" android:valueTo="8" app:labelBehavior="gone" />
+        <TextView style="@style/TimelineVisualizer.SettingSummary" android:text="@string/route_points_summary" />
+
+        <TextView style="@style/TimelineVisualizer.SectionTitle" android:layout_marginTop="24dp" android:paddingStart="0dp" android:paddingEnd="0dp" android:accessibilityHeading="true" android:text="@string/route_and_overlay" />
+        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/keepPastRoutesVisibleSwitch" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="@string/keep_past_routes_visible" />
+        <TextView style="@style/TimelineVisualizer.SettingSummary" android:text="@string/keep_past_routes_visible_summary" />
+        <LinearLayout android:id="@+id/pastRouteOpacityGroup" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:orientation="vertical">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+                <TextView style="@style/TimelineVisualizer.SliderLabel" android:text="@string/past_route_opacity" />
+                <TextView android:id="@+id/pastRouteOpacityValue" style="@style/TimelineVisualizer.SliderValue" tools:text="45%" />
+            </LinearLayout>
+            <com.google.android.material.slider.Slider android:id="@+id/pastRouteOpacitySlider" android:layout_width="match_parent" android:layout_height="wrap_content" android:contentDescription="@string/past_route_opacity" android:stepSize="5" android:value="45" android:valueFrom="10" android:valueTo="100" app:labelBehavior="gone" />
+        </LinearLayout>
+        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/hideDatesSwitch" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="@string/hide_dates" />
+        <TextView style="@style/TimelineVisualizer.SettingSummary" android:text="@string/hide_dates_summary" />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:orientation="horizontal">
             <com.google.android.material.button.MaterialButton android:id="@+id/cancelButton" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/cancel" />
             <Space android:layout_width="10dp" android:layout_height="1dp" />
             <com.google.android.material.button.MaterialButton android:id="@+id/applyButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/apply_to_video" />

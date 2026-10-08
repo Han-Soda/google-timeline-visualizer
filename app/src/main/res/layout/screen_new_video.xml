@@ -9,10 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingTop="14dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="28dp">
+        android:paddingStart="16dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="32dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,8 +24,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:text="@string/create"
-                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -138,13 +140,12 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="18dp"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="1dp">
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="0dp">
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
                     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/trip_video" android:textAppearance="?attr/textAppearanceTitleMedium" android:textStyle="bold" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/trip_video_summary" android:textAppearance="?attr/textAppearanceBodySmall" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/trip_video_summary" android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -156,13 +157,12 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="18dp"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="1dp">
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="0dp">
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
                     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/recap_video" android:textAppearance="?attr/textAppearanceTitleMedium" android:textStyle="bold" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/recap_video_summary" android:textAppearance="?attr/textAppearanceBodySmall" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/recap_video_summary" android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -174,13 +174,12 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="18dp"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="1dp">
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="0dp">
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
                     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/custom_recap" android:textAppearance="?attr/textAppearanceTitleMedium" android:textStyle="bold" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/custom_recap_summary" android:textAppearance="?attr/textAppearanceBodySmall" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/custom_recap_summary" android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -193,13 +192,12 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="18dp"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="1dp">
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="0dp">
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
                     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/raw_data_video" android:textAppearance="?attr/textAppearanceTitleMedium" android:textStyle="bold" />
-                    <TextView android:id="@+id/rawDataChoiceSummary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/raw_data_video_summary" android:textAppearance="?attr/textAppearanceBodySmall" />
+                    <TextView android:id="@+id/rawDataChoiceSummary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/raw_data_video_summary" android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -683,7 +681,7 @@
 
             <TextView android:id="@+id/journeyPreviewTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:maxLines="1" android:text="@string/journey_preview" android:textAppearance="?attr/textAppearanceTitleMedium" android:textStyle="bold" />
 
-            <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" app:cardCornerRadius="20dp" app:strokeWidth="0dp">
+            <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" app:cardCornerRadius="28dp" app:strokeWidth="0dp">
                 <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content">
                     <dev.mahlernim.timelinevisualizer.ui.TimelineView android:id="@+id/timelineView" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:background="@color/map_surface" android:clickable="true" android:contentDescription="@string/timeline_preview" />
                     <com.google.android.material.button.MaterialButton

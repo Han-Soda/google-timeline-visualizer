@@ -1,16 +1,56 @@
 <resources>
-    <style name="Theme.TimelineVisualizer" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Base.Theme.TimelineVisualizer" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.TimelineVisualizer" parent="Base.Theme.TimelineVisualizer">
         <item name="colorPrimary">@color/interactive</item>
         <item name="colorOnPrimary">@color/on_interactive</item>
+        <item name="colorPrimaryContainer">@color/theme_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/theme_on_primary_container</item>
+        <item name="colorPrimaryInverse">@color/theme_inverse_primary</item>
+        <item name="colorSecondary">@color/theme_secondary</item>
+        <item name="colorOnSecondary">@color/theme_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/theme_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/theme_on_secondary_container</item>
+        <item name="colorTertiary">@color/theme_tertiary</item>
+        <item name="colorOnTertiary">@color/theme_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/theme_tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/theme_on_tertiary_container</item>
+        <item name="colorError">@color/theme_error</item>
+        <item name="colorOnError">@color/theme_on_error</item>
+        <item name="colorErrorContainer">@color/theme_error_container</item>
+        <item name="colorOnErrorContainer">@color/theme_on_error_container</item>
+        <item name="android:colorBackground">@color/surface</item>
+        <item name="colorOnBackground">@color/on_surface</item>
         <item name="colorSurface">@color/surface</item>
-        <item name="colorSurfaceContainer">@color/surface_container</item>
         <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorSurfaceVariant">@color/theme_surface_variant</item>
         <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
+        <item name="colorSurfaceInverse">@color/theme_inverse_surface</item>
+        <item name="colorOnSurfaceInverse">@color/theme_inverse_on_surface</item>
+        <item name="colorSurfaceDim">@color/theme_surface_dim</item>
+        <item name="colorSurfaceBright">@color/theme_surface_bright</item>
+        <item name="colorSurfaceContainerLowest">@color/theme_surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/theme_surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/theme_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/theme_surface_container_highest</item>
         <item name="colorOutline">@color/outline</item>
+        <item name="colorOutlineVariant">@color/theme_outline_variant</item>
         <item name="android:colorAccent">@color/interactive</item>
-        <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowBackground">@color/surface</item>
         <item name="android:fontFamily">sans</item>
+
+        <item name="shapeAppearanceCornerExtraSmall">@style/ShapeAppearance.TimelineVisualizer.ExtraSmall</item>
+        <item name="shapeAppearanceCornerSmall">@style/ShapeAppearance.TimelineVisualizer.Small</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.TimelineVisualizer.Medium</item>
+        <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.TimelineVisualizer.Large</item>
+        <item name="shapeAppearanceCornerExtraLarge">@style/ShapeAppearance.TimelineVisualizer.ExtraLarge</item>
+
+        <item name="materialCardViewStyle">@style/Widget.TimelineVisualizer.Card</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.TimelineVisualizer.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.TimelineVisualizer.HeadlineSmall</item>
     </style>
 
     <style name="BottomNavigationTextAppearance" parent="TextAppearance.Material3.LabelMedium">

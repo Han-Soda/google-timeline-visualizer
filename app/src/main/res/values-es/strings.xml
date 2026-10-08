@@ -577,6 +577,17 @@
     <string name="simplify_route_detail_summary">Usa la actividad resumida de Timeline para crear una ruta más clara en vídeos de periodos largos. Si está desactivado, se usa la ruta más detallada disponible.</string>
     <string name="keep_past_routes_visible">Mantener visibles las rutas anteriores</string>
     <string name="keep_past_routes_visible_summary">Muestra las rutas completadas como un rastro tenue de fondo. Si está desactivado, los movimientos anteriores se desvanecen.</string>
+    <string name="animation_settings">Cámara y animación</string>
+    <string name="animation_settings_summary">Ajusta cómo hace zoom la cámara y cuántos puntos de Timeline sigue la animación.</string>
+    <string name="zoom_smoothness">Suavidad del zoom</string>
+    <string name="zoom_smoothness_summary">Los valores altos alejan la cámara antes de los viajes largos y la acercan poco a poco al llegar. El valor mínimo mantiene el zoom rápido original.</string>
+    <string name="route_points">Puntos de la ruta</string>
+    <string name="route_points_summary">Un espaciado mayor omite los puntos de Timeline muy cercanos, para que las paradas con saltos y las rutas densas se animen con más calma. Todos los puntos conserva cada detalle.</string>
+    <string name="route_points_all">Todos los puntos</string>
+    <string name="route_points_spacing">Al menos %1$s de separación</string>
+    <string name="route_points_used">Se animan %1$s de %2$s puntos</string>
+    <string name="past_route_opacity">Opacidad de las rutas anteriores</string>
+    <string name="route_and_overlay">Ruta y superposición</string>
     <string name="hide_dates">Ocultar fechas</string>
     <string name="hide_dates_summary">Oculta las fechas en el vídeo. La distancia sigue visible.</string>
 </resources>

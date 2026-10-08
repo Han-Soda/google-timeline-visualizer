@@ -627,6 +627,17 @@
     <string name="simplify_route_detail_summary">Gunakan aktivitas Linimasa yang diringkas untuk rute yang lebih rapi dalam video riwayat panjang. Saat nonaktif, rute tersedia yang paling terperinci digunakan.</string>
     <string name="keep_past_routes_visible">Tetap tampilkan rute sebelumnya</string>
     <string name="keep_past_routes_visible_summary">Tampilkan rute yang selesai sebagai jejak latar belakang samar. Saat nonaktif, pergerakan lama memudar.</string>
+    <string name="animation_settings">Kamera dan animasi</string>
+    <string name="animation_settings_summary">Sesuaikan cara kamera melakukan zoom dan jumlah titik Linimasa yang diikuti animasi.</string>
+    <string name="zoom_smoothness">Kehalusan zoom</string>
+    <string name="zoom_smoothness_summary">Nilai yang lebih tinggi memperkecil tampilan sebelum perjalanan jauh dan memperbesar secara bertahap setelah tiba. Nilai terendah mempertahankan zoom cepat bawaan.</string>
+    <string name="route_points">Titik rute</string>
+    <string name="route_points_summary">Jarak yang lebih lebar melewati titik Linimasa yang berdekatan, sehingga perhentian yang tidak stabil dan rute yang padat beranimasi lebih tenang. Semua titik mempertahankan setiap detail.</string>
+    <string name="route_points_all">Semua titik</string>
+    <string name="route_points_spacing">Berjarak minimal %1$s</string>
+    <string name="route_points_used">Menganimasikan %1$s dari %2$s titik</string>
+    <string name="past_route_opacity">Opasitas rute sebelumnya</string>
+    <string name="route_and_overlay">Rute dan overlay</string>
     <string name="hide_dates">Sembunyikan tanggal</string>
     <string name="hide_dates_summary">Sembunyikan tanggal dalam video. Jarak tetap terlihat.</string>
 </resources>

@@ -18,7 +18,8 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
+      # The runner image already has the Android SDK. setup-android@v3 now fails installing the
+      # legacy "tools" package, which current SDK managers no longer offer.
       - uses: gradle/actions/setup-gradle@v5
       - name: Test, lint, and build
         run: |

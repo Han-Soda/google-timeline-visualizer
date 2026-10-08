@@ -262,6 +262,13 @@ data class CameraSettings(
     val tripDetection: TripDetection = TripDetection.BALANCED,
     val localFraming: LocalFraming = LocalFraming.BALANCED,
     val keepPastRoutesVisible: Boolean = false,
+    /**
+     * How gradually the camera changes zoom, from 0 (the original immediate response) to 100.
+     * The app stores its own default in display preferences; 0 keeps older requests unchanged.
+     */
+    val zoomSmoothness: Int = 0,
+    /** Opacity of completed routes, in percent, while [keepPastRoutesVisible] is enabled. */
+    val pastRouteOpacity: Int = DEFAULT_PAST_ROUTE_OPACITY,
 ) {
     val episodeFramingEnabled: Boolean get() = localFraming.enabled
 
@@ -271,7 +278,18 @@ data class CameraSettings(
     val activeVideoFormat: VideoFormat
         get() = exportFormat?.format(videoQuality.aspectRatioOption) ?: videoQuality.format
 
+    /** Settings that shape the camera track; route styling can change without rebuilding it. */
+    fun cameraTrackKey(): CameraSettings =
+        copy(keepPastRoutesVisible = false, pastRouteOpacity = DEFAULT_PAST_ROUTE_OPACITY)
+
     companion object {
+        const val MIN_ZOOM_SMOOTHNESS = 0
+        const val MAX_ZOOM_SMOOTHNESS = 100
+        const val DEFAULT_ZOOM_SMOOTHNESS = 60
+        const val MIN_PAST_ROUTE_OPACITY = 10
+        const val MAX_PAST_ROUTE_OPACITY = 100
+        const val DEFAULT_PAST_ROUTE_OPACITY = 45
+
         val DEFAULT = CameraSettings(
             exportFormat = ExportFormatSettings(
                 shortEdge = ExportFormatSettings.DEFAULT_SHORT_EDGE,
