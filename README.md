@@ -2,7 +2,7 @@
 
 [한국어 안내](README.ko.md) · [日本語](README.ja.md)
 
-> **Trace**, a smaller rewrite of this app, lives in [`trace/`](trace/README.md).
+> **Trace**, a smaller rewrite of this app, now lives in its own repository: [Han-Soda/trace](https://github.com/Han-Soda/trace).
 
 Turn your Timeline file into an animated travel video on your Android phone. Choose
 exact dates, preview the Journey, and create an MP4 ready to watch or share.
